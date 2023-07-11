@@ -3,10 +3,615 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DepositCalculator.Desktop"
+        xmlns:viewModels="clr-namespace:DepositCalculator.Desktop.ViewModels"
+        xmlns:validation="clr-namespace:DepositCalculator.Desktop.Validation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainView" Height="450" Width="800"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True"
+        MouseDown="MainWindow_OnMouseDown"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}">
+    
+    <Border CornerRadius="10"
+            Background="#10110e">
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="5"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button x:Name="BtnMinimize"
+                        Background="CornflowerBlue"
+                        BorderThickness="0"
+                        Content="-"
+                        Foreground="White"
+                        FontSize="16"
+                        FontFamily="Montserrat"
+                        Cursor="Hand"
+                        Grid.Column="1"
+                        Click="BtnMinimize_OnClick">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Width="18" Height="18"
+                                    CornerRadius="3"
+                                    Background="{TemplateBinding Background}">
+                                <ContentPresenter VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                
+                <Button x:Name="BtnClose"
+                        Background="Red"
+                        BorderThickness="0"
+                        Content="X"
+                        Foreground="White"
+                        FontSize="16"
+                        FontFamily="Montserrat"
+                        Cursor="Hand"
+                        Grid.Column="2"
+                        Click="BtnClose_OnClick">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Width="18" Height="18"
+                                    CornerRadius="3"
+                                    Background="{TemplateBinding Background}">
+                                <ContentPresenter VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+            
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Border CornerRadius="5"
+                            Background="#1e1e1e"
+                            Width="200"
+                            BorderThickness="2"
+                            BorderBrush="Gray"
+                            Margin="50 0 0 0">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="140"
+                                        Orientation="Vertical">
+                                <TextBlock Text="Deposit amount"
+                                           Foreground="Gray"
+                                           FontSize="12"
+                                           FontWeight="Medium"
+                                           FontFamily="Montserrat"
+                                           TextAlignment="Center"
+                                           Margin="10 10 0 0">
+                            
+                                </TextBlock>
+                        
+                                <TextBox x:Name="AmountTextBox"
+                                         FontSize="20"
+                                         FontWeight="Medium"
+                                         FontFamily="Montserrat"
+                                         Background="#1e1e1e"
+                                         Foreground="White"
+                                         CaretBrush="LightGray"
+                                         BorderBrush="Transparent"
+                                         VerticalContentAlignment="Center"
+                                         BorderThickness="0"
+                                         TextAlignment="Center"
+                                         Margin="10 5 10 10">
+                                    <Validation.ErrorTemplate>
+                                        <ControlTemplate>
+                                            <Border BorderBrush="Red" BorderThickness="0 0 0 3">
+                                                <AdornedElementPlaceholder x:Name="controlWithError"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Validation.ErrorTemplate>
+                                    <TextBox.Text>
+                                        <Binding Path="DepositAmount" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <validation:DepositAmountValidationRule/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </StackPanel>
+                            <Border BorderThickness="2 0 0 0"
+                                    BorderBrush="Gray" 
+                                    Width="60">
+                                <ComboBox VerticalAlignment="Center" 
+                                          HorizontalAlignment="Center"
+                                          FontSize="30"
+                                          Background="#1e1e1e"
+                                          Foreground="White"
+                                          BorderThickness="0"
+                                          SelectedIndex="0"
+                                          SelectedItem="{Binding Path=SelectedCurrency, UpdateSourceTrigger=PropertyChanged}"
+                                          ItemsSource="{Binding Path=Currencies, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBox.Resources>
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#1e1e1e" />
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#1e1e1e" />
+                                        <Style x:Key="FocusVisual">
+                                            <Setter Property="Control.Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                        <SolidColorBrush x:Key="ComboBox.Static.Background" Color="#1e1e1e" />
+                                        <SolidColorBrush x:Key="ComboBox.Static.Border" Color="#FFACACAC"/>
+                                        <SolidColorBrush x:Key="ComboBox.Static.Editable.Background" Color="#FFFFFFFF"/>
+                                        <SolidColorBrush x:Key="ComboBox.Static.Editable.Border" Color="#FFABADB3"/>
+                                        <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Background" Color="Transparent"/>
+                                        <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Border" Color="Transparent"/>
+                                        <SolidColorBrush x:Key="ComboBox.MouseOver.Glyph" Color="#FF000000"/>
+                                        <LinearGradientBrush x:Key="ComboBox.MouseOver.Background" EndPoint="0,1" StartPoint="0,0">
+                                            <GradientStop Color="#1e1e1e" Offset="0.0"/>
+                                            <GradientStop Color="#1e1e1e" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                        <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Background" Color="#FFFFFFFF"/>
+                                        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Border" Color="#1e1e1e"/>
+                                        <LinearGradientBrush x:Key="ComboBox.MouseOver.Editable.Button.Background" EndPoint="0,1" StartPoint="0,0">
+                                            <GradientStop Color="#1e1e1e" Offset="0.0"/>
+                                            <GradientStop Color="#1e1e1e" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Border" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Pressed.Glyph" Color="#FF000000"/>
+                                        <LinearGradientBrush x:Key="ComboBox.Pressed.Background" EndPoint="0,1" StartPoint="0,0">
+                                            <GradientStop Color="#1e1e1e" Offset="0.0"/>
+                                            <GradientStop Color="#1e1e1e" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                        <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Background" Color="#FFFFFFFF"/>
+                                        <LinearGradientBrush x:Key="ComboBox.Pressed.Editable.Button.Background" EndPoint="0,1" StartPoint="0,0">
+                                            <GradientStop Color="#1e1e1e" Offset="0.0"/>
+                                            <GradientStop Color="#1e1e1e" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#1e1e1e"/>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="Transparent"/>
+                                        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="Transparent"/>
+                                        <SolidColorBrush x:Key="ComboBox.Static.Glyph" Color="#FF606060"/>
+                                        <Style x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+                                            <Setter Property="OverridesDefaultStyle" Value="true"/>
+                                            <Setter Property="IsTabStop" Value="false"/>
+                                            <Setter Property="Focusable" Value="false"/>
+                                            <Setter Property="ClickMode" Value="Press"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                        <Border x:Name="templateRoot" BorderBrush="{StaticResource ComboBox.Static.Border}" BorderThickness="{TemplateBinding BorderThickness}" Background="{StaticResource ComboBox.Static.Background}" SnapsToDevicePixels="true">
+                                                            <Border x:Name="splitBorder" BorderBrush="Transparent" BorderThickness="1" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                                                                <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" Fill="{StaticResource ComboBox.Static.Glyph}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Static.Editable.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Static.Editable.Border}"/>
+                                                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.Static.Editable.Button.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.Static.Editable.Button.Border}"/>
+                                                            </MultiDataTrigger>
+                                                            <Trigger Property="IsMouseOver" Value="true">
+                                                                <Setter Property="Fill" TargetName="arrow" Value="{StaticResource ComboBox.MouseOver.Glyph}"/>
+                                                            </Trigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Border}"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Editable.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Editable.Border}"/>
+                                                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Border}"/>
+                                                            </MultiDataTrigger>
+                                                            <Trigger Property="IsPressed" Value="true">
+                                                                <Setter Property="Fill" TargetName="arrow" Value="{StaticResource ComboBox.Pressed.Glyph}"/>
+                                                            </Trigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Border}"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Editable.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Editable.Border}"/>
+                                                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.Disabled.Editable.Button.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.Disabled.Editable.Button.Border}"/>
+                                                            </MultiDataTrigger>
+                                                            <Trigger Property="IsEnabled" Value="false">
+                                                                <Setter Property="Fill" TargetName="arrow" Value="{StaticResource ComboBox.Disabled.Glyph}"/>
+                                                            </Trigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Border}"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Editable.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Editable.Border}"/>
+                                                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.Disabled.Editable.Button.Background}"/>
+                                                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.Disabled.Editable.Button.Border}"/>
+                                                            </MultiDataTrigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
 
-    </Grid>
+                                            <SolidColorBrush x:Key="TextBox.Static.Background" Color="#FFFFFFFF"/>
+                                        </ComboBox.Resources>
+                                        <ComboBox.Template>
+                                            <ControlTemplate TargetType="{x:Type ComboBox}" xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" >
+                                                <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Margin="1" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
+                                                        <Themes:SystemDropShadowChrome x:Name="shadow" Color="Transparent" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
+                                                            <Border x:Name="dropDownBorder" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                                                                <ScrollViewer x:Name="DropDownScrollViewer">
+                                                                    <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
+                                                                        <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                                                            <Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+                                                                        </Canvas>
+                                                                        <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                                    </Grid>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Themes:SystemDropShadowChrome>
+                                                    </Popup>
+                                                    <ToggleButton x:Name="toggleButton" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ComboBoxToggleButton}"/>
+                                                    <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Content="{TemplateBinding SelectionBoxItem}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
+                                                        <Setter Property="Margin" TargetName="shadow" Value="0,0,5,5"/>
+                                                        <Setter Property="Color" TargetName="shadow" Value="#71000000"/>
+                                                    </Trigger>
+                                                    <Trigger Property="HasItems" Value="false">
+                                                        <Setter Property="Height" TargetName="dropDownBorder" Value="95"/>
+                                                    </Trigger>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsGrouping" Value="true"/>
+                                                            <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                                                    </MultiTrigger>
+                                                    <Trigger Property="ScrollViewer.CanContentScroll" SourceName="DropDownScrollViewer" Value="false">
+                                                        <Setter Property="Canvas.Top" TargetName="opaqueRect" Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}"/>
+                                                        <Setter Property="Canvas.Left" TargetName="opaqueRect" Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ComboBox.Template>
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="Background" Value="#1e1e1e"/>
+                                                <Setter Property="BorderBrush" Value="Gray"/>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                </ComboBox>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    
+                    <Border CornerRadius="5"
+                            Background="#1e1e1e"
+                            Width="200"
+                            BorderThickness="2"
+                            BorderBrush="Gray"
+                            Margin="60 0 0 0">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="110"
+                                        Orientation="Vertical">
+                                <TextBlock Text="Deposit term"
+                                           Foreground="Gray"
+                                           FontSize="12"
+                                           FontWeight="Medium"
+                                           FontFamily="Montserrat"
+                                           TextAlignment="Center"
+                                           Margin="10 10 0 0">
+                            
+                                </TextBlock>
+                        
+                                <TextBox x:Name="TermTextBox"
+                                         FontSize="20"
+                                         FontWeight="Medium"
+                                         FontFamily="Montserrat"
+                                         Background="#1e1e1e"
+                                         Foreground="White"
+                                         CaretBrush="LightGray"
+                                         BorderBrush="Transparent"
+                                         VerticalContentAlignment="Center"
+                                         BorderThickness="0"
+                                         TextAlignment="Center"
+                                         Margin="10 5 10 10">
+                                    <Validation.ErrorTemplate>
+                                        <ControlTemplate>
+                                            <Border BorderBrush="Red" BorderThickness="0 0 0 3">
+                                                <AdornedElementPlaceholder x:Name="controlWithError"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Validation.ErrorTemplate>
+                                    <TextBox.Text>
+                                        <Binding Path="DepositTermMonths" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <validation:DepositTermValidationRule/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </StackPanel>
+                            <Border BorderThickness="2 0 0 0"
+                                    BorderBrush="Gray" 
+                                    Width="90">
+                                <TextBlock Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="20">
+                                    months
+                                </TextBlock>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    
+                    <Border CornerRadius="5"
+                            Background="#1e1e1e"
+                            Width="150"
+                            BorderThickness="2"
+                            BorderBrush="Gray"
+                            Margin="70 0 0 0">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="80"
+                                        Orientation="Vertical">
+                                <TextBlock Text="Rate"
+                                           Foreground="Gray"
+                                           FontSize="12"
+                                           FontWeight="Medium"
+                                           FontFamily="Montserrat"
+                                           TextAlignment="Center"
+                                           Margin="10 10 10 0">
+                            
+                                </TextBlock>
+                        
+                                <TextBox x:Name="RateTextBox"
+                                         FontSize="20"
+                                         FontWeight="Medium"
+                                         FontFamily="Montserrat"
+                                         Background="#1e1e1e"
+                                         Foreground="White"
+                                         CaretBrush="LightGray"
+                                         BorderBrush="Transparent"
+                                         VerticalContentAlignment="Center"
+                                         BorderThickness="0"
+                                         TextAlignment="Center"
+                                         Margin="10 5 10 10">
+                                    <Validation.ErrorTemplate>
+                                        <ControlTemplate>
+                                            <Border BorderBrush="Red" BorderThickness="0 0 0 3">
+                                                <AdornedElementPlaceholder x:Name="controlWithError"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Validation.ErrorTemplate>
+                                    <TextBox.Text>
+                                        <Binding Path="MonthRate" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <validation:DepositRateValidationRule/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </StackPanel>
+                            <Border BorderThickness="2 0 0 0"
+                                    BorderBrush="Gray" 
+                                    Width="70">
+                                <TextBlock Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="20">
+                                    %
+                                </TextBlock>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal"
+                            Margin="0 100 0 0">
+                    <Button Width="200"
+                            Height="50"
+                            FontSize="23"
+                            FontWeight="Medium"
+                            FontFamily="Montserrat"
+                            Margin="150 0 0 0"
+                            Command="{Binding CalculateButtonCommand}">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="15"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Setter Property="Background" Value="Gray"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=(Validation.HasError), ElementName=AmountTextBox}" Value="False"/>
+                                            <Condition Binding="{Binding Path=(Validation.HasError), ElementName=TermTextBox}" Value="False"/>
+                                            <Condition Binding="{Binding Path=(Validation.HasError), ElementName=RateTextBox}" Value="False"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                        <Setter Property="Background" Value="Coral"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        Calculate
+                    </Button>
+                    <CheckBox VerticalAlignment="Center"
+                              Margin="50 0 0 0"
+                              IsChecked="{Binding Path=IsCapitalization, Mode=TwoWay}">
+                        <CheckBox.Style>
+                            <Style TargetType="{x:Type CheckBox}">
+                                <Setter Property="Background" Value="Gray" />
+                                <Setter Property="BorderBrush" Value="Gray"/>
+                                <Setter Property="Foreground" Value="#FF262E34"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type CheckBox}">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" >
+                                        <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" Width="15" Height="15">
+                                            <Path Stretch="Uniform" Width="15" Height="10" Fill="White" Name="eliCheck" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Visibility="Collapsed"/>
+                                        </Border>
+                                        <TextBlock Margin="5,0,0,0"  VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding Content}"></TextBlock>
+                                    </StackPanel>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="LightGray" />
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="#FF9C9E9F" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" Value="LightGray" />
+                                            <Setter Property="Foreground" Value="Gray" />
+                                            <Setter Property="BorderBrush" Value="Gray"/>
+                                            <Setter TargetName="eliCheck" Property="Opacity" Value="0.5" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="eliCheck" Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Background" Value="Coral"/>
+                                            <Setter Property="BorderBrush" Value="Coral"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                        </CheckBox.Style>
+                    </CheckBox>
+                    <TextBlock Foreground="White"
+                               FontSize="15"
+                               VerticalAlignment="Center"
+                               Margin="10 0 0 0"
+                               FontWeight="Medium"
+                               FontFamily="Montserrat">
+                        Capitalization
+                    </TextBlock>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" 
+                            Margin="0 100 0 0">
+                    <StackPanel Orientation="Vertical" 
+                                Margin="50 0 0 0">
+                        <TextBlock Text="Final amount"
+                                   Foreground="White"
+                                   FontSize="23"
+                                   FontWeight="Medium"
+                                   FontFamily="Montserrat"
+                                   Margin="10 10 0 0">
+                            
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="White"
+                                       FontSize="20"
+                                       FontWeight="Medium"
+                                       FontFamily="Montserrat"
+                                       Margin="10 10 0 0"
+                                       Text="{Binding Path=FinalAmount, StringFormat={}{0:#.##}}">
+                            </TextBlock>
+                            <TextBlock Foreground="White"
+                                       FontSize="20"
+                                       FontWeight="Medium"
+                                       FontFamily="Montserrat"
+                                       Margin="10 10 0 0"
+                                       Text="{Binding Path=SelectedCurrency}">
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"
+                                Margin="110 0 0 0">
+                        <TextBlock Text="Profit"
+                                   Foreground="White"
+                                   FontSize="23"
+                                   FontWeight="Medium"
+                                   FontFamily="Montserrat"
+                                   Margin="10 10 0 0">
+                            
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="White"
+                                       FontSize="20"
+                                       FontWeight="Medium"
+                                       FontFamily="Montserrat"
+                                       Margin="10 10 0 0"
+                                       Text="{Binding Path=DepositProfit, StringFormat={}{0:#.##}}">
+                            </TextBlock>
+                            <TextBlock Foreground="White"
+                                       FontSize="20"
+                                       FontWeight="Medium"
+                                       FontFamily="Montserrat"
+                                       Margin="10 10 0 0"
+                                       Text="{Binding Path=SelectedCurrency}">
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                
+                
+            </StackPanel>
+            
+        </Grid>
+        
+    </Border>
 </Window>
